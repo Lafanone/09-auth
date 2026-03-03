@@ -2,6 +2,11 @@ import { api } from './api';
 import { User } from '@/types/user';
 import { Note } from '@/types/note'; 
 
+export interface NotesResponse {
+  notes: Note[];
+  totalPages: number;
+}
+
 export const register = async (data: Record<string, string>) => {
   const res = await api.post<User>('/auth/register', data);
   return res.data;
@@ -32,7 +37,7 @@ export const updateMe = async (data: Partial<User>) => {
 };
 
 export const fetchNotes = async (params?: { search?: string; page?: number; perPage?: number; tag?: string }) => {
-  const res = await api.get<Note[]>('/notes', { 
+  const res = await api.get<Note[] | NotesResponse>('/notes', { 
     params: { perPage: 12, ...params } 
   });
   return res.data;

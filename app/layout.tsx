@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Notehub App",
-  description: "Manage your notes with authorization", // Оновили опис
+  description: "Manage your notes with authorization", 
 };
 
 export default function RootLayout({

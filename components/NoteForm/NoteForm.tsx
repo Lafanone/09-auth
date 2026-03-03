@@ -1,22 +1,25 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createNote } from '@/lib/api';
-import { useNoteStore } from '@/lib/store/noteStore';
+import { createNote } from '@/lib/api/clientApi';
 import css from './NoteForm.module.css'; 
 
 export default function NoteForm() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  
-  const { draft, setDraft, clearDraft } = useNoteStore();
+
+  const [draft, setDraft] = useState({
+    title: '',
+    tag: 'Todo',
+    content: ''
+  });
 
   const mutation = useMutation({
     mutationFn: createNote,
     onSuccess: () => {
-      clearDraft();
+      setDraft({ title: '', tag: 'Todo', content: '' }); 
       queryClient.invalidateQueries({ queryKey: ['notes'] });
       router.back(); 
     },
@@ -40,7 +43,7 @@ export default function NoteForm() {
           type="text"
           name="title"
           value={draft.title}
-          onChange={(e) => setDraft({ title: e.target.value })}
+          onChange={(e) => setDraft({ ...draft, title: e.target.value })}
           className={css.input}
           required
         />
@@ -51,7 +54,7 @@ export default function NoteForm() {
         <select
           name="tag"
           value={draft.tag}
-          onChange={(e) => setDraft({ tag: e.target.value })}
+          onChange={(e) => setDraft({ ...draft, tag: e.target.value })}
           className={css.select}
         >
           <option value="Todo">Todo</option>
@@ -67,7 +70,7 @@ export default function NoteForm() {
         <textarea
           name="content"
           value={draft.content}
-          onChange={(e) => setDraft({ content: e.target.value })}
+          onChange={(e) => setDraft({ ...draft, content: e.target.value })}
           className={css.textarea}
           required
         />
