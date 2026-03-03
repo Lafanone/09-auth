@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 
 export async function proxy(path: string, isPrivate: boolean = true) {
   const cookieStore = await cookies();
-  const hasAuthCookie = cookieStore.has('connect.sid') || cookieStore.has('sessionId'); 
+  const hasAuthCookie = cookieStore.has('accessToken') || cookieStore.has('connect.sid');
 
   if (isPrivate && !hasAuthCookie) {
     redirect('/sign-in');
