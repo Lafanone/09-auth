@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { getMe } from '@/lib/api/serverApi';
-import { proxy } from '../../proxy'
+import { proxy } from '@/proxy';
 import css from './ProfilePage.module.css';
 
 export const metadata = {
