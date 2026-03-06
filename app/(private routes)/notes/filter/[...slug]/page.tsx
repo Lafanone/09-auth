@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';
 import { fetchNotes } from '@/lib/api/serverApi';
-import { proxy } from '@/proxy'; 
 import NotesClient from './Notes.client';
 
 interface Props {
@@ -16,9 +15,9 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const filterName = tagParam === 'all' ? 'All Notes' : `Category: ${tagParam}`;
 
   return {
-      title: `${filterName} | NoteHub`,
-      description: `Viewing notes for filter: ${filterName}`,
-      openGraph: {
+    title: `${filterName} | NoteHub`,
+    description: `Viewing notes for filter: ${filterName}`,
+    openGraph: {
       title: `${filterName} | NoteHub`,
       description: `Viewing notes for filter: ${filterName}`,
       url: `/notes/filter/${params.slug.join('/')}`,
@@ -32,13 +31,9 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 }
 
 export default async function FilteredNotesPage(props: Props) {
-  await proxy('/notes', true);
-
   const params = await props.params;
   const tagParam = decodeURIComponent(params.slug[0]);
-  
   const queryTag = tagParam === 'all' ? undefined : tagParam;
-
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
@@ -48,7 +43,7 @@ export default async function FilteredNotesPage(props: Props) {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <NotesClient tagParam={tagParam} />
+      <NotesClient key={tagParam} tagParam={tagParam} />
     </HydrationBoundary>
   );
 }

@@ -61,8 +61,6 @@ export default function SignUp() {
             Register
           </button>
         </div>
-
-        {/* Відображаємо помилку лише тоді, коли вона є */}
         {error && <p className={css.error}>{error}</p>}
       </form>
     </main>

@@ -22,6 +22,7 @@ export default function NotesClient({ tagParam }: NotesClientProps) {
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search);
+      setPage(1); 
     }, 500);
     return () => clearTimeout(handler);
   }, [search]);
@@ -31,21 +32,15 @@ export default function NotesClient({ tagParam }: NotesClientProps) {
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['notes', tagParam, page, debouncedSearch],
-    queryFn: () => fetchNotes({ page, search: querySearch, tag: queryTag }),
+    queryFn: () => fetchNotes({ page, perPage: 12, search: querySearch, tag: queryTag }),
   });
 
   const handleSearch = (value: string) => {
     setSearch(value);
-    setPage(1);
   };
 
-  const notes: Note[] = Array.isArray(data) 
-    ? data 
-    : (data as NotesResponse)?.notes ?? [];
-
-  const totalPages: number = Array.isArray(data) 
-    ? 1 
-    : (data as NotesResponse)?.totalPages ?? 1;
+  const notes: Note[] = (data as NotesResponse)?.notes ?? (Array.isArray(data) ? data : []);
+  const totalPages: number = (data as NotesResponse)?.totalPages ?? 1;
 
   return (
     <div>
@@ -57,12 +52,13 @@ export default function NotesClient({ tagParam }: NotesClientProps) {
           Create Note +
         </Link>
       </div>
+      
       <SearchBox onSearch={handleSearch} />
 
       {isLoading && <p>Loading...</p>}
       {isError && <p>Error loading notes.</p>}
 
-      {notes.length > 0 ? (
+      {!isLoading && notes.length > 0 ? (
         <>
           <NoteList notes={notes} />
           <Pagination 
@@ -72,7 +68,7 @@ export default function NotesClient({ tagParam }: NotesClientProps) {
           />
         </>
       ) : (
-        !isLoading && <p className={css.empty}>{`No notes found`}</p>
+        !isLoading && <p className={css.empty}>No notes found in {tagParam}</p>
       )}
     </div>
   );

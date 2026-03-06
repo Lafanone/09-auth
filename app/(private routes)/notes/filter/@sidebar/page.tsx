@@ -13,11 +13,11 @@ export default function SidebarNotes() {
             </li>
             {TAGS.map((tag) => (
                 <li key={tag} className={css.menuItem}>
-                    <Link href={`/notes/filter/${tag}`} className={css.menuLink}>
-                        {tag}
-                    </Link>
-                </li>
-            ))}
+                <Link href={`/notes/filter/${tag.toLowerCase()}`} className={css.menuLink}>
+            {tag}
+        </Link>
+    </li>
+))}
         </ul>
     );
 }

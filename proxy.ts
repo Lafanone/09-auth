@@ -1,18 +1,34 @@
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-export async function proxy(path: string, isPrivate: boolean = true) {
-  const cookieStore = await cookies();
+export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
   const hasAuthCookie = 
-    cookieStore.has('connect.sid') || 
-    cookieStore.has('accessToken') || 
-    cookieStore.has('sessionId');
+    request.cookies.has('connect.sid') || 
+    request.cookies.has('accessToken') || 
+    request.cookies.has('sessionId');
 
-  if (isPrivate && !hasAuthCookie) {
-    redirect('/sign-in');
+  const isAuthRoute = pathname.startsWith('/sign-in') || pathname.startsWith('/sign-up');
+  const isPrivateRoute = pathname.startsWith('/profile') || pathname.startsWith('/notes');
+
+  if (isPrivateRoute && !hasAuthCookie) {
+    return NextResponse.redirect(new URL('/sign-in', request.url));
   }
 
-  if (!isPrivate && hasAuthCookie && path !== '/profile') {
-    redirect('/profile');
+  if (isAuthRoute && hasAuthCookie) {
+    return NextResponse.redirect(new URL('/notes/filter/all/1', request.url));
   }
+
+  return NextResponse.next();
 }
+
+export default proxy;
+
+export const config = {
+  matcher: [
+    '/profile/:path*',
+    '/notes/:path*',
+    '/sign-in',
+    '/sign-up',
+  ],
+};
