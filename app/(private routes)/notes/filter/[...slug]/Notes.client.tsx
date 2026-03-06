@@ -28,12 +28,11 @@ export default function NotesClient({ tagParam }: NotesClientProps) {
   }, [search]);
 
   const querySearch = debouncedSearch || undefined;
-  const queryTag = tagParam === 'all' ? undefined : tagParam;
+  const queryTag = tagParam === 'all' ? undefined : tagParam.toLowerCase(); 
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['notes', tagParam, page, debouncedSearch],
-    queryFn: () => fetchNotes({ page, perPage: 12, search: querySearch, tag: queryTag }),
-  });
+  queryKey: ['notes', tagParam, page, debouncedSearch],
+  queryFn: () => fetchNotes({ page, perPage: 12, search: querySearch, tag: queryTag }),});
 
   const handleSearch = (value: string) => {
     setSearch(value);

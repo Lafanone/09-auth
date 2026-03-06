@@ -3,8 +3,13 @@ import { cookies } from 'next/headers';
 import { User } from '@/types/user';
 import { Note } from '@/types/note';
 
+export interface NotesResponse {
+  notes: Note[];
+  totalPages: number;
+}
+
 const serverAxios = axios.create({
-  baseURL: 'https://notehub-api.goit.study', 
+  baseURL: 'https://notehub-api.goit.study/api',
   withCredentials: true,
 });
 
@@ -34,9 +39,16 @@ export const getMe = async () => {
 };
 
 export const fetchNotes = async (params?: { search?: string; page?: number; perPage?: number; tag?: string }) => {
-  const res = await serverAxios.get<Note[]>('/notes', { 
-    params: { perPage: 12, ...params } 
+  const formattedParams = {
+    ...params,
+    perPage: 12,
+    tag: params?.tag === 'all' ? undefined : params?.tag
+  };
+
+  const res = await serverAxios.get<NotesResponse | Note[]>('/notes', { 
+    params: formattedParams 
   });
+  
   return res.data;
 };
 
