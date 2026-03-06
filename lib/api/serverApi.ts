@@ -15,7 +15,6 @@ const serverAxios = axios.create({
 
 serverAxios.interceptors.request.use(async (config) => {
   const cookieStore = await cookies();
-
   const cookieString = cookieStore
     .getAll()
     .map((c) => `${c.name}=${c.value}`)
@@ -24,31 +23,24 @@ serverAxios.interceptors.request.use(async (config) => {
   if (cookieString) {
     config.headers.Cookie = cookieString;
   }
-  
   return config;
 });
 
-export const checkSession = async () => {
-  const res = await serverAxios.get<User>('/auth/session');
+export const fetchNotes = async (params?: { search?: string; page?: number; perPage?: number; tag?: string }) => {
+
+  const tag = params?.tag === 'all' ? undefined : params?.tag;
+  const res = await serverAxios.get<NotesResponse | Note[]>('/notes', { 
+    params: { 
+      perPage: 12, 
+      ...params,
+      tag 
+    } 
+  });
   return res.data;
 };
 
 export const getMe = async () => {
   const res = await serverAxios.get<User>('/users/me');
-  return res.data;
-};
-
-export const fetchNotes = async (params?: { search?: string; page?: number; perPage?: number; tag?: string }) => {
-  const formattedParams = {
-    ...params,
-    perPage: 12,
-    tag: params?.tag === 'all' ? undefined : params?.tag
-  };
-
-  const res = await serverAxios.get<NotesResponse | Note[]>('/notes', { 
-    params: formattedParams 
-  });
-  
   return res.data;
 };
 

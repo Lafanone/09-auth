@@ -4,20 +4,20 @@ import css from './SidebarNotes.module.css';
 const TAGS = ['Todo', 'Work', 'Personal', 'Meeting', 'Shopping'];
 
 export default function SidebarNotes() {
-    return (
-        <ul className={css.menuList}>
-            <li className={css.menuItem}>
-                <Link href="/notes/filter/all" className={css.menuLink}>
-                    All notes
-                </Link>
-            </li>
-            {TAGS.map((tag) => (
-                <li key={tag} className={css.menuItem}>
-                <Link href={`/notes/filter/${tag.toLowerCase()}`} className={css.menuLink}>
-            {tag}
+  return (
+    <ul className={css.menuList}>
+      <li className={css.menuItem}>
+        <Link href="/notes/filter/all" className={css.menuLink}>
+          All notes
         </Link>
-    </li>
-))}
-        </ul>
-    );
+      </li>
+      {TAGS.map((tag) => (
+        <li key={tag} className={css.menuItem}>
+          <Link href={`/notes/filter/${tag.toLowerCase()}`} className={css.menuLink}>
+            {tag}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
 }
