@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
 import Modal from '@/components/Modal/Modal';
-import { fetchNoteById } from '@/lib/api';
+import { fetchNoteById } from '@/lib/api/clientApi';
 import css from './NotePreview.module.css'; 
 
 export default function NotePreviewClient() {
@@ -44,7 +44,7 @@ export default function NotePreviewClient() {
         <div className={css.meta}>
           <span className={css.tag}>{note.tag || 'No Tag'}</span>
           <span className={css.date}>
-            {new Date(note.createdAt).toLocaleDateString()}
+            {note.createdAt ? new Date(note.createdAt).toLocaleDateString() : 'Date unknown'}
           </span>
         </div>
         <div className={css.content}>{note.content}</div>
