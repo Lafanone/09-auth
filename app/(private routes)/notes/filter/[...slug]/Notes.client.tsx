@@ -28,7 +28,7 @@ export default function NotesClient({ tagParam }: NotesClientProps) {
   }, [search]);
 
   const querySearch = debouncedSearch || undefined;
-  const queryTag = tagParam === 'all' ? undefined : tagParam.toLowerCase(); 
+  const queryTag = tagParam === 'all' ? undefined : tagParam.charAt(0).toUpperCase() + tagParam.slice(1);
 
   const { data, isLoading, isError } = useQuery({
   queryKey: ['notes', tagParam, page, debouncedSearch],

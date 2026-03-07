@@ -1,25 +1,21 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createNote } from '@/lib/api/clientApi';
+import { useNoteStore } from '@/lib/store/noteStore';
 import css from './NoteForm.module.css'; 
 
 export default function NoteForm() {
   const router = useRouter();
   const queryClient = useQueryClient();
-
-  const [draft, setDraft] = useState({
-    title: '',
-    tag: 'Todo',
-    content: ''
-  });
+  const { draft, updateDraft, clearDraft } = useNoteStore();
 
   const mutation = useMutation({
     mutationFn: createNote,
     onSuccess: () => {
-      setDraft({ title: '', tag: 'Todo', content: '' }); 
+      clearDraft(); 
       queryClient.invalidateQueries({ queryKey: ['notes'] });
       router.back(); 
     },
@@ -32,7 +28,20 @@ export default function NoteForm() {
   };
 
   const handleCancel = () => {
+    clearDraft();
     router.back();
+  };
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateDraft({ title: e.target.value });
+  };
+
+  const handleTagChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    updateDraft({ tag: e.target.value });
+  };
+
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    updateDraft({ content: e.target.value });
   };
 
   return (
@@ -43,7 +52,7 @@ export default function NoteForm() {
           type="text"
           name="title"
           value={draft.title}
-          onChange={(e) => setDraft({ ...draft, title: e.target.value })}
+          onChange={handleTitleChange}
           className={css.input}
           required
         />
@@ -54,7 +63,7 @@ export default function NoteForm() {
         <select
           name="tag"
           value={draft.tag}
-          onChange={(e) => setDraft({ ...draft, tag: e.target.value })}
+          onChange={handleTagChange}
           className={css.select}
         >
           <option value="Todo">Todo</option>
@@ -70,7 +79,7 @@ export default function NoteForm() {
         <textarea
           name="content"
           value={draft.content}
-          onChange={(e) => setDraft({ ...draft, content: e.target.value })}
+          onChange={handleContentChange}
           className={css.textarea}
           required
         />

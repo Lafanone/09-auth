@@ -1,44 +1,32 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 import { useAuthStore } from '@/lib/store/authStore';
-import { checkSession } from '@/lib/api/clientApi';
-import Loader from '../Loader/Loader'; 
+import { checkSession, getMe } from '@/lib/api/clientApi';
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const router = useRouter();
+  const [isChecking, setIsChecking] = useState(true);
   const { setUser, clearIsAuthenticated } = useAuthStore();
-  const [isChecking, setIsChecking] = useState(false);
-  const isPrivate = pathname.startsWith('/profile') || pathname.startsWith('/notes');
 
   useEffect(() => {
-    const verify = async () => {
-      if (!isPrivate) return;
-
-      setIsChecking(true);
+    const verifyAuth = async () => {
       try {
-        const user = await checkSession();
-        if (user && user.email) {
-          setUser(user);
-        } else {
-          clearIsAuthenticated();
-          router.push('/sign-in');
-        }
-      } catch (err) {
+        await checkSession();
+        const user = await getMe();
+        setUser(user);
+      } catch (error) {
+        console.error('Помилка валідації сесії:', error);
         clearIsAuthenticated();
-        router.push('/sign-in');
       } finally {
         setIsChecking(false);
       }
     };
 
-    verify();
-  }, [pathname, isPrivate, setUser, clearIsAuthenticated, router]);
+    verifyAuth();
+  }, [setUser, clearIsAuthenticated]);
 
-  if (isPrivate && isChecking) {
-    return <Loader />;
+  if (isChecking) {
+    return null; 
   }
 
   return <>{children}</>;

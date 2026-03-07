@@ -26,7 +26,7 @@ export default async function FilteredNotesPage(props: Props) {
   const params = await props.params;
   const tagParam = decodeURIComponent(params.slug[0]);
 
-  const queryTag = tagParam === 'all' ? undefined : tagParam;
+  const queryTag = tagParam === 'all' ? undefined : tagParam.charAt(0).toUpperCase() + tagParam.slice(1);
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({

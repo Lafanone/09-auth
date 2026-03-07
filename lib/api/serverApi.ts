@@ -9,7 +9,7 @@ export interface NotesResponse {
 }
 
 const serverAxios = axios.create({
-  baseURL: 'https://notehub-api.goit.study/api',
+  baseURL: 'https://notehub-api.goit.study',
   withCredentials: true,
 });
 
@@ -27,7 +27,6 @@ serverAxios.interceptors.request.use(async (config) => {
 });
 
 export const fetchNotes = async (params?: { search?: string; page?: number; perPage?: number; tag?: string }) => {
-
   const tag = params?.tag === 'all' ? undefined : params?.tag;
   const res = await serverAxios.get<NotesResponse | Note[]>('/notes', { 
     params: { 
@@ -47,4 +46,9 @@ export const getMe = async () => {
 export const fetchNoteById = async (id: string) => {
   const res = await serverAxios.get<Note>(`/notes/${id}`);
   return res.data;
+};
+
+export const checkSession = async () => {
+  const res = await serverAxios.post('/auth/session');
+  return res;
 };
