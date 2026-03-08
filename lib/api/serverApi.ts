@@ -49,6 +49,6 @@ export const fetchNoteById = async (id: string) => {
 };
 
 export const checkSession = async () => {
-  const res = await serverAxios.post('/auth/session');
+  const res = await serverAxios.get('/auth/session');
   return res;
 };
